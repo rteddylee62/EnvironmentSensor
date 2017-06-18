@@ -1,6 +1,8 @@
 /
-
-#/src/EnvironmentSensor/ArduinoCore/*
+/src/EnvironmentSensor/ArduinoCore/*
+!/src/EnvironmentSensor/ArduinoCore/Debug
+/src/EnvironmentSensor/Blank/*
+!/src/EnvironmentSensor/Blank/Debug
 #!/ArduinoCore
 #!/src
 #/ArduinoCore/Debug/*
