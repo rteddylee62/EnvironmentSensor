@@ -14,7 +14,7 @@
 #include "Main.h"
 
 // debug define for controlling serial communications
-#define DEBUG 1
+#define DEBUG 0
 
 // On the Ethernet Shield, CS is pin 4. Note that even if it's not
 // used as the CS pin, the hardware CS pin (10 on most Arduino boards,
@@ -22,8 +22,9 @@
 // functions will not work.
 #define SDCARD_CS	4
 #define SS10		10
+#define DHTPIN      2       // Pin which is connected to the DHT sensor.
 
-#define DHTPIN      2         // Pin which is connected to the DHT sensor.
+#define sensorPin   A0      // select the input  pin for  the potentiometer
 
 // Uncomment the type of sensor in use:
 #define DHTTYPE           DHT11     // DHT 11
@@ -36,6 +37,7 @@
 DHT_Unified dht( DHTPIN, DHTTYPE );
 
 #define TIME_DELAY	900000	// 15 min
+//#define TIME_DELAY	60000	// 1 min
 //#define TIME_DELAY	30000	// 30 sec
 
 // file object
@@ -43,10 +45,11 @@ File dataFile;
 
 void setup() 
 {
-	// initialize serial port
-	Serial.begin( 9600 );
 	int res = InitSdCard();
 #if DEBUG
+	// initialize serial port
+	Serial.begin( 9600 );
+	
 	if ( res )
 		Serial.println( "card initialized." );
 	else
@@ -161,7 +164,12 @@ void loop()
 #endif
 
 		dataString += String( event.relative_humidity );
+		dataString += ",";
 	}
+	
+	// read light resistance value
+	int sensorValue =  analogRead(sensorPin);
+	dataString += String( sensorValue );
 
 #if DEBUG
 	Serial.println( dataString );
@@ -203,7 +211,10 @@ int InitSdCard()
 /************************************************************************/
 File openFile( String filename )
 {
+#ifdef DEBUG
 	Serial.println(filename);
+#endif
+
 	File file = SD.open( filename, FILE_WRITE );
 	if( !file ) {
 #ifdef DEBUG
